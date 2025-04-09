@@ -1,0 +1,76 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "决策魔方",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/option-input/index",
+			"style": {
+				"navigationBarTitleText": "添加选项",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/theme-select/index",
+			"style": {
+				"navigationBarTitleText": "选择主题",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/animation/index",
+			"style": {
+				"navigationBarTitleText": "决策进行中",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/result/index",
+			"style": {
+				"navigationBarTitleText": "决策结果",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/history/index",
+			"style": {
+				"navigationBarTitleText": "历史记录",
+				"navigationStyle": "custom"
+			}
+		},
+		{
+			"path": "pages/history-detail/index",
+			"style": {
+				"navigationBarTitleText": "历史详情",
+				"navigationStyle": "custom"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "决策魔方",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"uniIdRouter": {},
+	"easycom": {
+		"autoscan": true,
+		"custom": {
+			"^uni-(.*)": "@/components/uni-$1/uni-$1.vue"
+		}
+	},
+	"condition": {
+		"current": 0,
+		"list": [
+			{
+				"name": "",
+				"path": "",
+				"query": ""
+			}
+		]
+	}
+}

@@ -1,0 +1,41 @@
+# UniApp项目忽略文件
+
+# 开发工具相关
+.DS_Store
+node_modules/
+.hbuilderx/
+
+# 编译和构建产物
+/unpackage/
+/dist/
+
+# npm相关
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# 编辑器相关
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 本地环境文件
+.env.local
+.env.*.local
+
+# 日志文件
+logs/
+*.log
+
+# 测试相关
+/coverage/
+
+# 缓存文件
+.sass-cache/
+.cache/ 
