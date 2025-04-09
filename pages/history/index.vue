@@ -1,5 +1,8 @@
 <template>
 	<view class="history-page">
+		<!-- 状态栏占位 -->
+		<view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
+		
 		<!-- 顶部导航栏 -->
 		<view class="navbar">
 			<view class="navbar-left" @tap="goBack">
@@ -20,7 +23,10 @@
 					:key="item.id" 
 					class="history-item"
 				>
-					<view class="history-item-bg" :style="getThemeBgStyle(item.theme)">
+					<view class="history-item-bg" 
+						:style="getThemeBgStyle(item.theme)"
+						@tap.stop="viewDetail(item.id)"
+					>
 						<view class="history-item-content">
 							<view class="history-question">{{ item.title }}</view>
 							<view class="history-result">结果: {{ item.result }}</view>
@@ -29,15 +35,15 @@
 					</view>
 					
 					<view class="history-actions">
-						<view class="action-btn" @tap="viewDetail(item.id)">
+						<view class="action-btn" @tap.stop="viewDetail(item.id)">
 							<text class="action-icon">🔍</text>
 							<text class="action-text">查看详情</text>
 						</view>
-						<view class="action-btn" @tap="redoDecision(item)">
+						<view class="action-btn" @tap.stop="redoDecision(item)">
 							<text class="action-icon">🔄</text>
 							<text class="action-text">再次决策</text>
 						</view>
-						<view class="action-btn delete" @tap="deleteHistory(item.id, index)">
+						<view class="action-btn delete" @tap.stop="deleteHistory(item.id, index)">
 							<text class="action-icon">🗑️</text>
 							<text class="action-text">删除</text>
 						</view>
@@ -64,6 +70,7 @@ export default {
 	setup() {
 		const store = useStore();
 		const historyList = ref([]);
+		const statusBarHeight = ref(20); // 默认状态栏高度
 		
 		// 获取历史记录
 		const loadHistory = () => {
@@ -190,10 +197,15 @@ export default {
 		// 组件挂载时加载历史
 		onMounted(() => {
 			loadHistory();
+			
+			// 获取状态栏高度
+			const systemInfo = uni.getSystemInfoSync();
+			statusBarHeight.value = systemInfo.statusBarHeight || 20;
 		});
 		
 		return {
 			historyList,
+			statusBarHeight,
 			formatTime,
 			getThemeBgStyle,
 			viewDetail,
@@ -213,6 +225,12 @@ export default {
 	background-color: #f8f9fa;
 	display: flex;
 	flex-direction: column;
+}
+
+/* 状态栏样式 */
+.status-bar {
+	width: 100%;
+	background-color: #ffffff;
 }
 
 /* 导航栏样式 */
@@ -274,11 +292,63 @@ export default {
 	overflow: hidden;
 	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 	background-color: #ffffff;
+	position: relative;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	
+	/* 添加悬浮光效 */
+	&::before {
+		content: '';
+		position: absolute;
+		top: -10px;
+		left: -10px;
+		right: -10px;
+		bottom: -10px;
+		background: radial-gradient(circle at center, rgba(63, 126, 242, 0.2) 0%, rgba(63, 126, 242, 0) 70%);
+		border-radius: 16px;
+		opacity: 0;
+		z-index: -1;
+		transition: opacity 0.5s ease;
+		pointer-events: none; /* 确保不阻挡点击事件 */
+	}
+	
+	&:active {
+		transform: translateY(-2px) scale(1.02);
+		box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+		
+		&::before {
+			opacity: 1;
+		}
+	}
+	
+	/* 添加点击波纹效果 */
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(255, 255, 255, 0);
+		z-index: 1; /* 降低层级，不要阻挡操作按钮 */
+		transition: background-color 0.3s;
+		pointer-events: none; /* 确保不阻挡点击事件 */
+	}
+	
+	&:active::after {
+		background-color: rgba(255, 255, 255, 0.1);
+	}
 }
 
 .history-item-bg {
 	height: 150px;
 	position: relative;
+	transition: transform 0.3s ease;
+	
+	/* 悬浮时背景图片缩放效果 */
+	.history-item:active & {
+		transform: scale(1.05);
+	}
 	
 	&::before {
 		content: '';
@@ -289,6 +359,12 @@ export default {
 		height: 100%;
 		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7));
 		z-index: 1;
+		transition: background 0.3s ease;
+	}
+	
+	/* 悬浮时背景渐变加深 */
+	.history-item:active &::before {
+		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.75));
 	}
 }
 
@@ -300,6 +376,12 @@ export default {
 	padding: 16px;
 	color: #ffffff;
 	z-index: 2;
+	transition: transform 0.3s ease;
+	
+	/* 悬浮时内容微微放大 */
+	.history-item:active & {
+		transform: translateY(-2px) scale(1.01);
+	}
 }
 
 .history-question {
@@ -324,6 +406,8 @@ export default {
 	display: flex;
 	padding: 12px;
 	border-top: 1px solid #f0f0f0;
+	position: relative;
+	z-index: 5; /* 增加z-index确保按钮可点击 */
 }
 
 .action-btn {
@@ -332,6 +416,32 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	padding: 8px 0;
+	position: relative;
+	transition: all 0.2s ease;
+	z-index: 10; /* 增加z-index确保按钮可点击 */
+	
+	&:active {
+		transform: scale(0.95);
+		opacity: 0.9;
+	}
+	
+	&::before {
+		content: '';
+		position: absolute;
+		top: 50%;
+		left: 0;
+		width: 1px;
+		height: 60%;
+		background-color: #f0f0f0;
+		transform: translateY(-50%);
+		opacity: 0;
+		z-index: 1; /* 分隔线层级调低 */
+		pointer-events: none; /* 确保不阻挡点击事件 */
+	}
+	
+	&:not(:first-child)::before {
+		opacity: 1;
+	}
 	
 	&.delete {
 		color: #ff5a5f;
@@ -341,6 +451,11 @@ export default {
 .action-icon {
 	font-size: 20px;
 	margin-bottom: 4px;
+	transition: transform 0.2s ease;
+	
+	.action-btn:active & {
+		transform: scale(1.1);
+	}
 }
 
 .action-text {

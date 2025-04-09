@@ -1,5 +1,8 @@
 <template>
 	<view class="detail-page" :class="'theme-' + historyItem.theme">
+		<!-- 状态栏占位 -->
+		<view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
+		
 		<!-- 顶部导航栏 -->
 		<view class="navbar">
 			<view class="navbar-left" @tap="goBack">
@@ -87,7 +90,7 @@
 </template>
 
 <script>
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
 import { useStore } from 'vuex';
 import { getDecisionById, deleteDecision } from '@/utils/storage';
 import { getThemeById } from '@/utils/theme-config';
@@ -133,6 +136,7 @@ export default {
 		
 		const isLoading = ref(true);
 		const notFound = ref(false);
+		const statusBarHeight = ref(20); // 默认状态栏高度
 		
 		// 加载历史记录
 		const loadHistoryItem = (id) => {
@@ -247,25 +251,45 @@ export default {
 			});
 		};
 		
+		// 组件挂载时获取状态栏高度
+		onMounted(() => {
+			// 获取状态栏高度
+			try {
+				const systemInfo = uni.getSystemInfoSync();
+				statusBarHeight.value = systemInfo.statusBarHeight || 20;
+			} catch (e) {
+				console.error('获取系统信息失败', e);
+			}
+		});
+		
 		return {
 			historyItem,
 			isLoading,
 			notFound,
+			statusBarHeight,
+			loadHistoryItem,
 			goBack,
 			formatDate,
 			getThemeName,
 			replayDecision,
-			restoreOptions,
-			loadHistoryItem
+			restoreOptions
 		};
 	}
 };
 </script>
 
 <style lang="scss">
+/* 状态栏样式 */
+.status-bar {
+	width: 100%;
+	background-color: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(10px);
+}
+
 .detail-page {
 	min-height: 100vh;
-	background-color: #f5f5f5;
+	/* 使用中性的背景色，适配任何主题 */
+	background-color: #f6f7f9;
 	padding-bottom: 40rpx;
 	
 	&.theme-capsule {
@@ -407,6 +431,8 @@ export default {
 	align-items: center;
 	position: relative;
 	z-index: 100;
+	background-color: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(10px);
 	
 	.navbar-left {
 		width: 70px;
