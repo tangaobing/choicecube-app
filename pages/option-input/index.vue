@@ -49,8 +49,11 @@
 				</view>
 				
 				<!-- 选项计数/提示 -->
-				<view class="option-count-tip" v-if="options.length > 0">
+				<view class="option-count-tip" v-if="options.length > 0 && options.length < 2">
 					已添加{{options.length}}个选项，至少需要2个选项
+				</view>
+				<view class="option-count-tip success" v-else-if="options.length >= 2">
+					已添加{{options.length}}个选项
 				</view>
 				<view class="empty-tip" v-else>
 					还没有添加选项哦
@@ -198,7 +201,11 @@ export default {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-	background: linear-gradient(to bottom, #ffffff, #f0f5ff);
+	background: linear-gradient(135deg, #fcfcfc, #f0f5ff);
+	background-image: url('/static/images/backgrounds/option_input_bg.png');
+	background-size: cover;
+	background-position: center;
+	background-blend-mode: soft-light;
 	position: relative;
 	
 	/* 背景图片支持 */
@@ -213,7 +220,7 @@ export default {
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
-		opacity: 0.15; /* 较低透明度确保表单内容清晰可见 */
+		opacity: 0.15; /* 较低的透明度确保表单内容可见 */
 		z-index: 0;
 	}
 	
@@ -419,6 +426,11 @@ export default {
 	padding: 8px;
 	border-radius: 20px;
 	margin-top: 10px;
+	
+	&.success {
+		background-color: rgba(76, 175, 80, 0.1);
+		color: #4CAF50;
+	}
 }
 
 .empty-tip {

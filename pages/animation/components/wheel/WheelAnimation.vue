@@ -7,7 +7,7 @@
 		<view class="decision-question">
 			<view class="question-scroll">
 				<text class="question-text">
-					【天机揭示】请解：<text class="highlight">{{ decisionQuestion }}</text>
+					【天机揭示】请解：<text class="highlight">{{ decisionQuestion || '未设置决策问题' }}</text>
 				</text>
 				<view class="ink-mark">问</view>
 			</view>
@@ -74,22 +74,25 @@ export default {
 	props: {
 		decisionQuestion: {
 			type: String,
-			required: true
+			required: true,
+			default: '未设置决策问题'
 		},
 		options: {
 			type: Array,
-			required: true
+			required: true,
+			default: () => []
 		},
 		loadingText: {
 			type: String,
-			required: true
+			required: true,
+			default: '天机演算中...'
 		}
 	},
 	emits: ['select-option', 'skip'],
 	setup(props, { emit }) {
 		const selectedOption = ref(null);
 		const wheelRotation = ref(0);
-		const currentLoadingText = ref('天机正在演算...');
+		const currentLoadingText = ref(props.loadingText || '天机正在演算...');
 		const trigramElements = ref([]);
 		const inkDrops = ref([]);
 		
@@ -171,16 +174,35 @@ export default {
 		
 		// 选择选项
 		const selectOption = (option) => {
+			if (!option) {
+				console.error('天机轮：尝试选择无效选项');
+				return;
+			}
+			
+			console.log('天机轮选择选项:', option);
 			selectedOption.value = option;
+			
+			// 使用震动反馈
+			try {
+				uni.vibrateShort();
+			} catch (e) {
+				console.error('震动反馈失败', e);
+			}
+			
+			// 立即发送选项事件
 			emit('select-option', option);
 		};
 		
 		// 跳过动画
 		const skipAnimation = () => {
+			console.log('天机轮：跳过动画');
 			emit('skip');
 		};
 		
 		onMounted(() => {
+			console.log('天机轮组件已挂载，决策问题:', props.decisionQuestion);
+			console.log('选项列表:', props.options);
+			
 			// 创建八卦符号
 			createBaguaSymbols();
 			

@@ -61,25 +61,9 @@
 		</view>
 		
 		<!-- 开始决策按钮 -->
-		<view class="footer">
+		<view class="decision-btn-container">
 			<view class="start-btn" @tap="startDecision" :class="{ 'disabled': !selectedTheme }">
 				开始决策
-			</view>
-		</view>
-		
-		<!-- 底部导航栏 -->
-		<view class="tab-bar">
-			<view class="tab-item" @tap="navigateToHome">
-				<text class="tab-icon">首页</text>
-			</view>
-			<view class="tab-item">
-				<text class="tab-icon">搜索</text>
-			</view>
-			<view class="tab-item active">
-				<text class="tab-icon">决策</text>
-			</view>
-			<view class="tab-item">
-				<text class="tab-icon">我的</text>
 			</view>
 		</view>
 	</view>
@@ -131,13 +115,6 @@ export default {
 			uni.navigateBack();
 		};
 		
-		// 导航到主页
-		const navigateToHome = () => {
-			uni.reLaunch({
-				url: '/pages/index/index'
-			});
-		};
-		
 		// 开始决策
 		const startDecision = () => {
 			if (selectedTheme.value) {
@@ -158,7 +135,6 @@ export default {
 			themes,
 			selectTheme,
 			goBack,
-			navigateToHome,
 			startDecision
 		};
 	}
@@ -171,7 +147,11 @@ export default {
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	background-color: #ffffff;
+	background: linear-gradient(135deg, #ffffff, #f7f9fc);
+	background-image: url('/static/images/backgrounds/theme_select_bg.png');
+	background-size: cover;
+	background-position: center;
+	background-blend-mode: soft-light;
 	position: relative;
 	
 	/* 背景图片支持 */
@@ -186,7 +166,7 @@ export default {
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
-		opacity: 0.1; /* 低透明度确保主题卡片突出 */
+		opacity: 0.25; /* 适当透明度，保持主题卡片突出 */
 		z-index: 0;
 	}
 	
@@ -273,6 +253,11 @@ export default {
 		font-size: 12px;
 		font-weight: bold;
 		z-index: 2;
+	}
+	
+	/* 调整下方的卡片位置，上移减少间距 */
+	&:nth-child(3), &:nth-child(4) {
+		margin-top: -50px;
 	}
 	
 	.theme-preview {
@@ -366,69 +351,36 @@ export default {
 }
 
 /* 底部区域样式 */
-.footer {
-	padding: 10px 15px 15px;
-	background-color: #ffffff;
+.decision-btn-container {
+	position: absolute;
+	bottom: 40px;
+	left: 0;
+	right: 0;
+	padding: 0 30px;
+	z-index: 10;
 }
 
 .start-btn {
 	width: 100%;
-	height: 44px;
+	height: 50px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: #3f7ef2;
+	background: linear-gradient(to right, #a0a0a0, #cccccc); /* 默认为灰色 */
 	color: #ffffff;
-	border-radius: 22px;
-	font-size: 17px;
+	border-radius: 25px;
+	font-size: 18px;
 	font-weight: bold;
-	box-shadow: 0 2px 6px rgba(63, 126, 242, 0.3);
+	box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+	transition: all 0.3s ease;
+	
+	&:not(.disabled) {
+		background: linear-gradient(to right, #3f7ef2, #5c9df5); /* 选中后为蓝色 */
+		box-shadow: 0 4px 15px rgba(63, 126, 242, 0.4);
+	}
 	
 	&.disabled {
-		background-color: #cccccc;
-		box-shadow: none;
+		opacity: 0.8;
 	}
-}
-
-/* 底部导航栏 */
-.tab-bar {
-	width: 100%;
-	height: 50px;
-	background-color: #ffffff;
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-	border-top: 1px solid #f0f0f0;
-	z-index: 10;
-}
-
-.tab-item {
-	flex: 1;
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	color: #999999;
-	
-	&.active {
-		color: #3f7ef2;
-	}
-}
-
-.tab-icon {
-	font-size: 12px;
 }
 </style>
-
-/* 用于替代图片的动画效果说明 */
-/* 
-根据原型图所示，每个主题卡片需要具有特定的背景图片。
-这些图片应该放置在 /static/images/themes/ 目录下，命名如下：
-- 命运胶囊主题: capsule_preview.png (蓝色显示器与代码的图片)
-- 神选时刻主题: divine_preview.png (金属打磨工具的图片)
-- 天机轮主题: wheel_preview.png (占位，需添加适合东方玄学风格的图片)
-- 气运池主题: pool_preview.png (城市水面景观的图片)
-
-图片尺寸建议至少为 300x300px，保持正方形比例以适应卡片布局。
-*/ 

@@ -234,8 +234,12 @@ export default {
 	padding: 20px;
 	position: relative;
 	background: linear-gradient(to bottom right, #3a6186, #89253e);
+	background-image: url('/static/images/backgrounds/home_bg.png');
+	background-size: cover;
+	background-position: center;
+	background-blend-mode: soft-light;
 	
-	/* 背景图片支持 */
+	/* 背景图片支持 - 使用伪元素作为备用 */
 	&::before {
 		content: '';
 		position: absolute;
@@ -247,7 +251,8 @@ export default {
 		background-size: cover;
 		background-position: center;
 		background-repeat: no-repeat;
-		opacity: 0.8; /* 调整透明度以确保前景内容可见 */
+		opacity: 0.8; /* 适当透明度确保前景内容可见 */
+		mix-blend-mode: soft-light; /* 混合模式增强效果 */
 		z-index: 0;
 	}
 	

@@ -219,9 +219,13 @@ export default {
 	box-sizing: border-box;
 	padding-top: calc(var(--status-bar-height) + 30rpx);
 	
-	/* 根据不同主题使用不同的背景图片 */
+	/* 主题样式，支持背景图片 */
 	&.theme-capsule {
 		background: linear-gradient(135deg, #0F2027, #203A43, #2C5364);
+		background-image: url('/static/images/backgrounds/capsule_result_bg.png');
+		background-size: cover;
+		background-position: center;
+		background-blend-mode: soft-light;
 		
 		&::before {
 			content: '';
@@ -234,13 +238,17 @@ export default {
 			background-size: cover;
 			background-position: center;
 			background-repeat: no-repeat;
-			opacity: 0.4; /* 结果页透明度稍低，提高内容可读性 */
+			opacity: 0.4;
 			z-index: 0;
 		}
 	}
 	
 	&.theme-divine {
 		background: linear-gradient(135deg, #1A0033, #3B0068, #5C00A3);
+		background-image: url('/static/images/backgrounds/divine_result_bg.png');
+		background-size: cover;
+		background-position: center;
+		background-blend-mode: soft-light;
 		
 		&::before {
 			content: '';
@@ -260,6 +268,10 @@ export default {
 	
 	&.theme-wheel {
 		background: linear-gradient(135deg, #1E293B, #334155, #475569);
+		background-image: url('/static/images/backgrounds/wheel_result_bg.png');
+		background-size: cover;
+		background-position: center;
+		background-blend-mode: soft-light;
 		
 		&::before {
 			content: '';
@@ -279,6 +291,10 @@ export default {
 	
 	&.theme-pool {
 		background: linear-gradient(135deg, #0B3866, #105A9A, #1B6EBF);
+		background-image: url('/static/images/backgrounds/pool_result_bg.png');
+		background-size: cover;
+		background-position: center;
+		background-blend-mode: soft-light;
 		
 		&::before {
 			content: '';

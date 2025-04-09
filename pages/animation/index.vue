@@ -10,8 +10,10 @@
 		</view>
 		
 		<!-- 进度条 -->
-		<view class="progress-bar">
-			<view class="progress" :style="{width: progress + '%'}"></view>
+		<view class="progress-bar-container">
+			<view class="progress-bar">
+				<view class="progress" :style="{width: progress + '%'}"></view>
+			</view>
 		</view>
 		
 		<!-- 主题动画容器 -->
@@ -165,11 +167,10 @@ export default {
 				
 				// 停止监听加速度
 				try {
-					uni.stopAccelerometer({
-						success: () => console.log('加速度计停止成功'),
-						fail: (err) => console.error('加速度计停止失败', err),
-						complete: () => console.log('加速度计停止完成')
-					});
+					// 先移除回调函数，避免callback错误
+					uni.offAccelerometerChange();
+					// 然后停止加速度计
+					uni.stopAccelerometer();
 				} catch (e) {
 					console.error('停止加速度计失败', e);
 				}
@@ -180,35 +181,82 @@ export default {
 		
 		// 开始更新进度条
 		const startProgressUpdate = () => {
-			// 每150ms更新一次进度，每次增加2-6之间的随机数，大幅提高速度
+			// 确保进度从0开始
+			progress.value = 0;
+			console.log('进度条开始更新');
+			
+			// 更频繁地更新进度条，每次增加更大的值
 			progressTimer = setInterval(() => {
-				if (progress.value < 100) {
-					progress.value += 2 + Math.random() * 4;
-					// 当进度达到100时，停止更新并自动跳转到结果页
-					if (progress.value >= 100) {
-						progress.value = 100;
-						clearInterval(progressTimer);
-						console.log('进度条达到100%，准备跳转');
-						
-						// 根据当前主题随机选择一个选项
-						const randomIndex = Math.floor(Math.random() * options.value.length);
-						const selectedOption = options.value[randomIndex];
-						console.log('随机选择结果:', selectedOption);
-						
-						// 确保DOM更新后再播放特效
-						setTimeout(() => {
-							// 播放对应主题的特效，然后跳转
-							playThemeCompletionEffect().then(() => {
-								selectFinalResult(selectedOption);
-							}).catch(err => {
-								console.error('特效播放失败:', err);
-								// 发生错误时仍然跳转
-								selectFinalResult(selectedOption);
-							});
-						}, 100);
-					}
+				if (progress.value < 95) { // 限制到95%，避免自动结束
+					// 增加更大的随机值使进度条变化明显
+					let increment = 4 + Math.random() * 6;
+					progress.value += increment;
+					console.log('进度更新:', progress.value);
+					
+				} else if (progress.value < 100) {
+					progress.value = 95; // 保持在95%
 				}
-			}, 150);
+			}, 100); // 更快的频率：每100ms更新一次
+			
+			// 10秒后如果还未完成，自动选择结果
+			setTimeout(() => {
+				if (progress.value < 100) {
+					// 设置进度为100%
+					progress.value = 100;
+					
+					// 清除定时器
+					if (progressTimer) {
+						clearInterval(progressTimer);
+						progressTimer = null;
+					}
+					
+					console.log('进度条达到100%，准备跳转');
+					
+					// 检查选项数组是否有效
+					if (!options.value || options.value.length === 0) {
+						console.error('选项数组无效或为空');
+						// 显示错误提示
+						uni.showToast({
+							title: '选项加载失败，请返回重试',
+							icon: 'none',
+							duration: 2000
+						});
+						// 3秒后返回上一页
+						setTimeout(() => {
+							uni.navigateBack();
+						}, 3000);
+						return;
+					}
+					
+					// 根据当前主题随机选择一个选项
+					const randomIndex = Math.floor(Math.random() * options.value.length);
+					const selectedOption = options.value[randomIndex];
+					console.log('随机选择结果:', selectedOption);
+					
+					// 确保有有效的选项
+					if (!selectedOption) {
+						console.error('选择的选项无效');
+						uni.showToast({
+							title: '决策失败，请返回重试',
+							icon: 'none',
+							duration: 2000
+						});
+						// 3秒后返回上一页
+						setTimeout(() => {
+							uni.navigateBack();
+						}, 3000);
+						return;
+					}
+					
+					// 播放主题特效并跳转
+					playThemeCompletionEffect().then(() => {
+						selectFinalResult(selectedOption);
+					}).catch(err => {
+						console.error('特效播放失败:', err);
+						selectFinalResult(selectedOption);
+					});
+				}
+			}, 10000);
 		};
 		
 		// 播放主题完成时的特效
@@ -433,23 +481,34 @@ export default {
 		
 		// 天机轮主题选择选项
 		const selectWheelOption = (option) => {
-			selectedWheelOption.value = option;
-		};
-		
-		// 天机轮确认选择
-		const confirmWheelSelection = () => {
-			if (selectedWheelOption.value) {
-				selectFinalResult(selectedWheelOption.value);
+			if (!option) {
+				console.error('天机轮：尝试选择无效选项');
+				return;
 			}
+			
+			console.log('天机轮选择选项:', option);
+			selectedWheelOption.value = option;
+			
+			// 直接执行结果选择，无需额外确认
+			selectFinalResult(option);
 		};
 		
-		// 最终选择结果并跳转结果页 - 完全重写的版本
+		// 最终选择结果并跳转结果页
 		const selectFinalResult = (option) => {
 			console.log('Final option selected:', option);
 			
 			// 检查选项是否有效
 			if (!option) {
 				console.error('选项无效，无法设置结果');
+				uni.showToast({
+					title: '决策失败，请返回重试',
+					icon: 'none',
+					duration: 2000
+				});
+				// 3秒后返回上一页
+				setTimeout(() => {
+					uni.navigateBack();
+				}, 3000);
 				return;
 			}
 			
@@ -470,7 +529,8 @@ export default {
 					options: options.value,
 					result: option,
 					theme: currentTheme.value,
-					seed: seed
+					seed: seed,
+					timestamp: Date.now() // 添加时间戳
 				};
 				
 				// 保存决策记录
@@ -568,7 +628,6 @@ export default {
 			selectDivineOption,
 			selectCapsuleOption,
 			selectWheelOption,
-			confirmWheelSelection,
 			selectFinalResult,
 			goBack,
 			getThemeTitle
@@ -583,14 +642,16 @@ export default {
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
-	align-items: center;
 	position: relative;
 	overflow: hidden;
 	
-	/* 根据不同主题使用不同的背景图片 */
+	/* 主题样式，支持背景图片 */
 	&.theme-capsule {
 		background: linear-gradient(135deg, #0F2027, #203A43, #2C5364);
+		background-image: url('/static/images/backgrounds/capsule_animation_bg.png');
+		background-size: cover;
+		background-position: center;
+		background-blend-mode: soft-light;
 		
 		&::before {
 			content: '';
@@ -610,6 +671,10 @@ export default {
 	
 	&.theme-divine {
 		background: linear-gradient(135deg, #1A0033, #3B0068, #5C00A3);
+		background-image: url('/static/images/backgrounds/divine_animation_bg.png');
+		background-size: cover;
+		background-position: center;
+		background-blend-mode: soft-light;
 		
 		&::before {
 			content: '';
@@ -629,6 +694,10 @@ export default {
 	
 	&.theme-wheel {
 		background: linear-gradient(135deg, #1E293B, #334155, #475569);
+		background-image: url('/static/images/backgrounds/wheel_animation_bg.png');
+		background-size: cover;
+		background-position: center;
+		background-blend-mode: soft-light;
 		
 		&::before {
 			content: '';
@@ -648,6 +717,10 @@ export default {
 	
 	&.theme-pool {
 		background: linear-gradient(135deg, #0B3866, #105A9A, #1B6EBF);
+		background-image: url('/static/images/backgrounds/pool_animation_bg.png');
+		background-size: cover;
+		background-position: center;
+		background-blend-mode: soft-light;
 		
 		&::before {
 			content: '';
@@ -671,57 +744,90 @@ export default {
 		z-index: 1;
 	}
 	
-	.progress-bar {
-		position: absolute;
-		top: var(--status-bar-height);
-		left: 0;
+	/* 导航栏样式 */
+	.nav-bar {
 		width: 100%;
-		height: 10rpx;
-		background-color: rgba(255, 255, 255, 0.3);
+		height: 44px;
+		display: flex;
+		align-items: center;
+		padding: 0 15px;
+		background-color: rgba(0, 0, 0, 0.1);
+		backdrop-filter: blur(10px);
 		z-index: 100;
-		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-		
-		.progress {
-			height: 100%;
-			transition: width 0.2s ease;
-		}
+		position: relative;
+		margin-top: var(--status-bar-height);
+	}
+
+	.nav-left {
+		width: 70px;
+		height: 100%;
+		display: flex;
+		align-items: center;
+	}
+
+	.back-text {
+		font-size: 16px;
+		color: #ffffff;
+		font-weight: 500;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+	}
+
+	.nav-title {
+		flex: 1;
+		text-align: center;
+		font-size: 17px;
+		font-weight: bold;
+		color: #ffffff;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	}
+
+	.nav-right {
+		width: 30px;
+	}
+
+	/* 进度条容器 */
+	.progress-bar-container {
+		width: 100%;
+		padding: 0 20rpx;
+		z-index: 20;
+	}
+
+	/* 进度条样式 */
+	.progress-bar {
+		width: 100%;
+		height: 8rpx;
+		background-color: rgba(255, 255, 255, 0.3);
+		border-radius: 4rpx;
+		margin: 0 auto;
+		overflow: hidden;
+		position: relative;
+	}
+
+	.progress {
+		height: 100%;
+		border-radius: 4rpx;
+		transition: width 0.15s linear;
 	}
 
 	/* 为每个主题定制进度条样式 */
-	.theme-divine .progress-bar {
-		background-color: rgba(179, 136, 255, 0.2);
-		
-		.progress {
-			background: linear-gradient(to right, #9d4edd, #c77dff);
-			box-shadow: 0 0 10px rgba(157, 78, 221, 0.5);
-		}
+	.theme-divine .progress {
+		background: linear-gradient(to right, #9d4edd, #c77dff);
+		box-shadow: 0 0 10px rgba(157, 78, 221, 0.5);
 	}
 
-	.theme-capsule .progress-bar {
-		background-color: rgba(165, 216, 255, 0.2);
-		
-		.progress {
-			background: linear-gradient(to right, #0077b6, #90e0ef);
-			box-shadow: 0 0 10px rgba(0, 119, 182, 0.5);
-		}
+	.theme-capsule .progress {
+		background: linear-gradient(to right, #0077b6, #90e0ef);
+		box-shadow: 0 0 10px rgba(0, 119, 182, 0.5);
 	}
 
-	.theme-wheel .progress-bar {
-		background-color: rgba(199, 140, 67, 0.15);
-		
-		.progress {
-			background: linear-gradient(to right, #a47e3b, #e6b325);
-			box-shadow: 0 0 10px rgba(164, 126, 59, 0.5);
-		}
+	.theme-wheel .progress {
+		background: linear-gradient(to right, #a47e3b, #e6b325);
+		box-shadow: 0 0 10px rgba(164, 126, 59, 0.5);
 	}
 
-	.theme-pool .progress-bar {
-		background-color: rgba(41, 182, 246, 0.2);
-		
-		.progress {
-			background: linear-gradient(to right, #0288d1, #29b6f6);
-			box-shadow: 0 0 10px rgba(41, 182, 246, 0.5);
-		}
+	.theme-pool .progress {
+		background: linear-gradient(to right, #0288d1, #29b6f6);
+		box-shadow: 0 0 10px rgba(41, 182, 246, 0.5);
 	}
 
 	.animation-container {
@@ -1023,46 +1129,6 @@ export default {
 			opacity: 0;
 			transform: scale(1.5);
 		}
-	}
-
-	/* 导航栏样式 */
-	.nav-bar {
-		width: 100%;
-		height: 44px;
-		display: flex;
-		align-items: center;
-		padding: 0 15px;
-		background-color: rgba(0, 0, 0, 0.1);
-		backdrop-filter: blur(10px);
-		z-index: 100;
-		position: relative;
-	}
-
-	.nav-left {
-		width: 70px;
-		height: 100%;
-		display: flex;
-		align-items: center;
-	}
-
-	.back-text {
-		font-size: 16px;
-		color: #ffffff;
-		font-weight: 500;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-	}
-
-	.nav-title {
-		flex: 1;
-		text-align: center;
-		font-size: 17px;
-		font-weight: bold;
-		color: #ffffff;
-		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-	}
-
-	.nav-right {
-		width: 30px;
 	}
 }
 </style>

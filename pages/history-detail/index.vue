@@ -288,20 +288,47 @@ export default {
 
 .detail-page {
 	min-height: 100vh;
-	/* 使用中性的背景色，适配任何主题 */
 	background-color: #f6f7f9;
+	background-image: url('/static/images/backgrounds/history_detail_bg.png');
+	background-size: cover;
+	background-position: center;
+	background-blend-mode: soft-light;
 	padding-bottom: 40rpx;
+	position: relative;
 	
+	/* 背景图片支持 */
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: var(--history-detail-bg-image, none);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		opacity: 0.15; /* 降低透明度确保内容可见 */
+		z-index: 0;
+	}
+	
+	/* 确保所有内容在背景之上 */
+	& > * {
+		position: relative;
+		z-index: 1;
+	}
+	
+	/* 主题特定样式 */
 	&.theme-capsule {
-		background-color: #f0f9ff;
+		background: linear-gradient(135deg, #f0f7ff, #e6f2ff);
 		
 		.navbar {
-			background-color: #0077b6;
+			background: linear-gradient(to right, rgba(0, 119, 182, 0.9), rgba(3, 4, 94, 0.8));
 			color: #ffffff;
 		}
 		
 		.result-card {
-			background-color: #ffffff;
+			background-color: rgba(255, 255, 255, 0.95);
 			color: #333333;
 			border-top: 8rpx solid #0077b6;
 		}
@@ -309,32 +336,35 @@ export default {
 		.result-text-container {
 			background: linear-gradient(135deg, #caf0f8, #ade8f4);
 			color: #03045e;
+			box-shadow: 0 4rpx 15rpx rgba(0, 119, 182, 0.2);
 		}
 		
 		.section-title {
 			color: #0077b6;
+			border-left: 6rpx solid #0077b6;
+			padding-left: 12rpx;
 		}
 		
 		.option-item.selected {
-			background-color: #caf0f8;
+			background-color: #e0f7fa;
 			border-left: 4rpx solid #0077b6;
 		}
 		
 		.action-button {
-			background-color: #0077b6;
+			background: linear-gradient(to right, #0077b6, #023e8a);
 		}
 	}
 	
 	&.theme-divine {
-		background-color: #f8f0ff;
+		background: linear-gradient(135deg, #f5f0ff, #efebff);
 		
 		.navbar {
-			background-color: #8b5cf6;
+			background: linear-gradient(to right, rgba(139, 92, 246, 0.9), rgba(76, 29, 149, 0.8));
 			color: #ffffff;
 		}
 		
 		.result-card {
-			background-color: #ffffff;
+			background-color: rgba(255, 255, 255, 0.95);
 			color: #333333;
 			border-top: 8rpx solid #8b5cf6;
 		}
@@ -342,32 +372,35 @@ export default {
 		.result-text-container {
 			background: linear-gradient(135deg, #e9d5ff, #d8b4fe);
 			color: #4c1d95;
+			box-shadow: 0 4rpx 15rpx rgba(139, 92, 246, 0.2);
 		}
 		
 		.section-title {
 			color: #8b5cf6;
+			border-left: 6rpx solid #8b5cf6;
+			padding-left: 12rpx;
 		}
 		
 		.option-item.selected {
-			background-color: #e9d5ff;
+			background-color: #f3e8ff;
 			border-left: 4rpx solid #8b5cf6;
 		}
 		
 		.action-button {
-			background-color: #8b5cf6;
+			background: linear-gradient(to right, #8b5cf6, #6d28d9);
 		}
 	}
 	
 	&.theme-wheel {
-		background-color: #fffbeb;
+		background: linear-gradient(135deg, #fffbf0, #fff7e6);
 		
 		.navbar {
-			background-color: #a47e3b;
+			background: linear-gradient(to right, rgba(164, 126, 59, 0.9), rgba(120, 53, 15, 0.8));
 			color: #ffffff;
 		}
 		
 		.result-card {
-			background-color: #ffffff;
+			background-color: rgba(255, 255, 255, 0.95);
 			color: #333333;
 			border-top: 8rpx solid #a47e3b;
 		}
@@ -375,32 +408,35 @@ export default {
 		.result-text-container {
 			background: linear-gradient(135deg, #fef3c7, #fde68a);
 			color: #78350f;
+			box-shadow: 0 4rpx 15rpx rgba(164, 126, 59, 0.2);
 		}
 		
 		.section-title {
 			color: #a47e3b;
+			border-left: 6rpx solid #a47e3b;
+			padding-left: 12rpx;
 		}
 		
 		.option-item.selected {
-			background-color: #fef3c7;
+			background-color: #fef9c3;
 			border-left: 4rpx solid #a47e3b;
 		}
 		
 		.action-button {
-			background-color: #a47e3b;
+			background: linear-gradient(to right, #a47e3b, #92400e);
 		}
 	}
 	
 	&.theme-pool {
-		background-color: #ecfeff;
+		background: linear-gradient(135deg, #f0f7fa, #e6f5ff);
 		
 		.navbar {
-			background-color: #0ea5e9;
+			background: linear-gradient(to right, rgba(14, 165, 233, 0.9), rgba(7, 89, 133, 0.8));
 			color: #ffffff;
 		}
 		
 		.result-card {
-			background-color: #ffffff;
+			background-color: rgba(255, 255, 255, 0.95);
 			color: #333333;
 			border-top: 8rpx solid #0ea5e9;
 		}
@@ -408,19 +444,22 @@ export default {
 		.result-text-container {
 			background: linear-gradient(135deg, #bae6fd, #7dd3fc);
 			color: #075985;
+			box-shadow: 0 4rpx 15rpx rgba(14, 165, 233, 0.2);
 		}
 		
 		.section-title {
 			color: #0ea5e9;
+			border-left: 6rpx solid #0ea5e9;
+			padding-left: 12rpx;
 		}
 		
 		.option-item.selected {
-			background-color: #bae6fd;
+			background-color: #e0f2fe;
 			border-left: 4rpx solid #0ea5e9;
 		}
 		
 		.action-button {
-			background-color: #0ea5e9;
+			background: linear-gradient(to right, #0ea5e9, #0369a1);
 		}
 	}
 }
@@ -431,7 +470,6 @@ export default {
 	align-items: center;
 	position: relative;
 	z-index: 100;
-	background-color: rgba(255, 255, 255, 0.8);
 	backdrop-filter: blur(10px);
 	
 	.navbar-left {
@@ -441,7 +479,7 @@ export default {
 		
 		.back-text {
 			font-size: 16px;
-			color: #333333;
+			color: #ffffff;
 			font-weight: 500;
 		}
 	}
@@ -459,8 +497,9 @@ export default {
 	padding: 0;
 	border-radius: 16rpx;
 	background-color: #ffffff;
-	box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.1);
+	box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.15);
 	overflow: hidden;
+	backdrop-filter: blur(5px);
 	
 	/* 标题区域 */
 	.result-header {
@@ -468,7 +507,7 @@ export default {
 		border-bottom: 1rpx solid #f0f0f0;
 		
 		.result-title {
-			font-size: 32rpx;
+			font-size: 34rpx;
 			font-weight: 600;
 			margin-bottom: 8rpx;
 			color: #333333;
@@ -486,21 +525,26 @@ export default {
 		border-bottom: 1rpx solid #f0f0f0;
 		
 		.result-label {
-			font-size: 26rpx;
+			font-size: 28rpx;
 			font-weight: 500;
-			margin-bottom: 16rpx;
+			margin-bottom: 20rpx;
 			color: #666666;
 		}
 		
 		.result-text-container {
-			padding: 30rpx;
+			padding: 36rpx;
 			border-radius: 12rpx;
 			text-align: center;
 			margin-bottom: 10rpx;
+			transition: all 0.3s;
+			
+			&:active {
+				transform: scale(0.98);
+			}
 		}
 		
 		.result-text {
-			font-size: 40rpx;
+			font-size: 44rpx;
 			font-weight: 600;
 			line-height: 1.3;
 		}
@@ -514,27 +558,29 @@ export default {
 		.section-title {
 			font-size: 28rpx;
 			font-weight: 600;
-			margin-bottom: 20rpx;
+			margin-bottom: 24rpx;
 		}
 		
 		.options-container {
 			display: flex;
 			flex-direction: column;
-			gap: 12rpx;
+			gap: 16rpx;
 		}
 		
 		.option-item {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			padding: 16rpx 20rpx;
-			border-radius: 8rpx;
+			padding: 20rpx 24rpx;
+			border-radius: 10rpx;
 			background-color: #f9f9f9;
 			font-size: 28rpx;
+			transition: all 0.2s;
 			
 			&.selected {
 				font-weight: 500;
-				padding-left: 16rpx;
+				padding-left: 20rpx;
+				transform: translateX(4rpx);
 			}
 			
 			.selected-icon {
@@ -551,18 +597,18 @@ export default {
 		.section-title {
 			font-size: 28rpx;
 			font-weight: 600;
-			margin-bottom: 20rpx;
+			margin-bottom: 24rpx;
 		}
 		
 		.info-table {
 			background-color: #f9f9f9;
-			border-radius: 8rpx;
+			border-radius: 10rpx;
 			overflow: hidden;
 		}
 		
 		.info-row {
 			display: flex;
-			padding: 16rpx 20rpx;
+			padding: 20rpx 24rpx;
 			border-bottom: 1rpx solid #eaeaea;
 			
 			&:last-child {
@@ -590,24 +636,24 @@ export default {
 	}
 }
 
-/* 新版操作按钮 */
+/* 操作按钮 */
 .action-buttons {
 	display: flex;
 	justify-content: space-around;
-	padding: 20rpx;
+	padding: 30rpx 20rpx;
 	margin: 20rpx;
 	
 	.action-button {
 		flex: 1;
 		max-width: 300rpx;
-		height: 80rpx;
+		height: 88rpx;
 		margin: 0 15rpx;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		color: #ffffff;
-		border-radius: 40rpx;
-		box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+		border-radius: 44rpx;
+		box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.2);
 		transition: all 0.3s;
 		
 		&:active {
@@ -638,6 +684,7 @@ export default {
 	justify-content: center;
 	align-items: center;
 	background-color: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(5px);
 	
 	.loading-spinner {
 		width: 80rpx;
@@ -683,10 +730,11 @@ export default {
 		height: 80rpx;
 		line-height: 80rpx;
 		text-align: center;
-		background-color: #007aff;
+		background: linear-gradient(to right, #007aff, #0056b3);
 		color: #ffffff;
 		border-radius: 40rpx;
 		font-size: 28rpx;
+		box-shadow: 0 4rpx 12rpx rgba(0, 122, 255, 0.3);
 	}
 }
 </style> 
