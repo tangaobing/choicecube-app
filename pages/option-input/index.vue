@@ -4,7 +4,7 @@
 		<view class="status-bar" :style="{ height: statusBarHeight + 'px' }"></view>
 		<view class="nav-bar">
 			<view class="nav-left" @tap="goBack">
-				<text class="nav-icon">←</text>
+				<text class="back-text">返回</text>
 			</view>
 			<view class="nav-title">输入决策选项</view>
 		</view>
@@ -200,6 +200,28 @@ export default {
 	flex-direction: column;
 	background: linear-gradient(to bottom, #ffffff, #f0f5ff);
 	position: relative;
+	
+	/* 背景图片支持 */
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: var(--option-input-bg-image, none);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		opacity: 0.15; /* 较低透明度确保表单内容清晰可见 */
+		z-index: 0;
+	}
+	
+	/* 确保所有内容在背景之上 */
+	& > * {
+		position: relative;
+		z-index: 1;
+	}
 }
 
 /* 状态栏 */
@@ -215,22 +237,25 @@ export default {
 	background-color: #ffffff;
 	display: flex;
 	align-items: center;
-	padding: 0 16px;
+	justify-content: center;
+	border-bottom: 1px solid #f0f0f0;
+	padding: 0 15px;
 	position: relative;
 	z-index: 100;
-	border-bottom: 1px solid #f0f0f0;
 }
 
 .nav-left {
-	width: 24px;
-	height: 44px;
+	position: absolute;
+	left: 15px;
+	width: 70px;
 	display: flex;
 	align-items: center;
 }
 
-.nav-icon {
-	font-size: 20px;
+.back-text {
+	font-size: 16px;
 	color: #333333;
+	font-weight: 500;
 }
 
 .nav-title {

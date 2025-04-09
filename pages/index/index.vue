@@ -2,8 +2,10 @@
 	<view class="home-container">
 		<!-- 历史记录按钮 -->
 		<view class="history-btn" @tap="navigateToHistory">
-			<text class="iconfont icon-history"></text>
-			<text class="history-text">历史</text>
+			<view class="icon-container">
+				<text class="iconfont icon-clock">🕒</text>
+			</view>
+			<text class="history-text">历史记录</text>
 		</view>
 		
 		<!-- 内容区域 -->
@@ -225,55 +227,78 @@ export default {
 
 <style lang="scss">
 .home-container {
-	height: 100vh;
+	width: 100%;
+	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-	background-image: url('../../static/images/background.jpg');
-	background-size: cover;
-	background-position: center;
+	padding: 20px;
 	position: relative;
+	background: linear-gradient(to bottom right, #3a6186, #89253e);
 	
+	/* 背景图片支持 */
 	&::before {
 		content: '';
 		position: absolute;
 		top: 0;
 		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: rgba(0, 0, 0, 0.5);
+		width: 100%;
+		height: 100%;
+		background-image: var(--home-bg-image, none);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		opacity: 0.8; /* 调整透明度以确保前景内容可见 */
+		z-index: 0;
+	}
+	
+	/* 确保所有内容在背景之上 */
+	& > * {
+		position: relative;
 		z-index: 1;
 	}
 }
 
 .history-btn {
 	position: absolute;
-	top: 20px;
-	right: 20px;
-	background-color: rgba(255, 255, 255, 0.3);
+	top: 30px; /* 移回顶部 */
+	right: 15px;
+	background: rgba(255, 255, 255, 0.2);
 	backdrop-filter: blur(10px);
 	color: white;
-	padding: 8px 15px;
-	border-radius: 20px;
+	padding: 6px 12px; /* 减小内边距 */
+	border-radius: 20px; /* 减小圆角 */
 	display: flex;
-	justify-content: center;
 	align-items: center;
-	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 减小阴影 */
 	z-index: 10;
 	transition: all 0.3s ease;
+	border: 1px solid rgba(255, 255, 255, 0.3);
 	
-	.iconfont {
-		font-size: 18px;
+	.icon-container {
+		width: 18px; /* 减小图标容器 */
+		height: 18px;
+		border-radius: 50%;
+		background: linear-gradient(135deg, #8B5CF6, #6366F1);
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		margin-right: 5px;
 	}
 	
+	.iconfont {
+		font-size: 12px; /* 减小图标大小 */
+	}
+	
 	.history-text {
-		font-size: 14px;
+		font-size: 12px; /* 减小文字大小 */
 		font-weight: 500;
+		letter-spacing: 0.5px; /* 减小字母间距 */
 	}
 	
 	&:active {
-		background-color: rgba(255, 255, 255, 0.4);
-		transform: scale(1.05);
+		background-color: rgba(255, 255, 255, 0.25);
+		transform: translateY(2px);
+		box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 	}
 }
 

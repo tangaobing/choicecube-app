@@ -213,31 +213,93 @@ export default {
 .result-page {
 	min-height: 100vh;
 	display: flex;
-	justify-content: center;
-	align-items: center;
+	flex-direction: column;
+	position: relative;
 	padding: 30rpx;
 	box-sizing: border-box;
-	position: relative;
 	padding-top: calc(var(--status-bar-height) + 30rpx);
 	
-	&.theme-divine {
-		background: #f0e6ff;
+	/* 根据不同主题使用不同的背景图片 */
+	&.theme-capsule {
+		background: linear-gradient(135deg, #0F2027, #203A43, #2C5364);
+		
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: var(--capsule-result-bg-image, none);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.4; /* 结果页透明度稍低，提高内容可读性 */
+			z-index: 0;
+		}
 	}
 	
-	&.theme-capsule {
-		background: linear-gradient(135deg, #0a1929 0%, #1a365d 100%);
+	&.theme-divine {
+		background: linear-gradient(135deg, #1A0033, #3B0068, #5C00A3);
+		
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: var(--divine-result-bg-image, none);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.4;
+			z-index: 0;
+		}
 	}
 	
 	&.theme-wheel {
-		background: #f5f2e9;
-		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><text x="20" y="40" font-family="serif" font-size="40">☯</text></svg>');
+		background: linear-gradient(135deg, #1E293B, #334155, #475569);
+		
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: var(--wheel-result-bg-image, none);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.4;
+			z-index: 0;
+		}
 	}
 	
 	&.theme-pool {
-		background: linear-gradient(135deg, #0a1929 0%, #1e88e5 100%);
-		background-image: 
-			radial-gradient(circle at 20% 30%, rgba(41, 182, 246, 0.15) 0%, transparent 20%),
-			radial-gradient(circle at 70% 60%, rgba(79, 195, 247, 0.1) 0%, transparent 20%);
+		background: linear-gradient(135deg, #0B3866, #105A9A, #1B6EBF);
+		
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: var(--pool-result-bg-image, none);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.4;
+			z-index: 0;
+		}
+	}
+	
+	/* 确保所有内容在背景之上 */
+	& > * {
+		position: relative;
+		z-index: 1;
 	}
 }
 

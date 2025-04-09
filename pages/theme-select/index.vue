@@ -3,7 +3,7 @@
 		<!-- 导航栏 -->
 		<view class="nav-bar">
 			<view class="nav-left" @tap="goBack">
-				<text class="nav-icon">←</text>
+				<text class="back-text">返回</text>
 			</view>
 			<view class="nav-title">选择一个主题风格</view>
 			<view class="nav-right"></view>
@@ -173,6 +173,28 @@ export default {
 	flex-direction: column;
 	background-color: #ffffff;
 	position: relative;
+	
+	/* 背景图片支持 */
+	&::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: var(--theme-select-bg-image, none);
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		opacity: 0.1; /* 低透明度确保主题卡片突出 */
+		z-index: 0;
+	}
+	
+	/* 确保所有内容在背景之上 */
+	& > * {
+		position: relative;
+		z-index: 1;
+	}
 }
 
 /* 导航栏样式 */
@@ -188,16 +210,16 @@ export default {
 }
 
 .nav-left {
-	width: 30px;
+	width: 70px;
 	height: 100%;
 	display: flex;
 	align-items: center;
 }
 
-.nav-icon {
-	font-size: 22px;
+.back-text {
+	font-size: 16px;
 	color: #333333;
-	cursor: pointer;
+	font-weight: 500;
 }
 
 .nav-title {

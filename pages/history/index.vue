@@ -3,7 +3,7 @@
 		<!-- 顶部导航栏 -->
 		<view class="navbar">
 			<view class="navbar-left" @tap="goBack">
-				<text class="iconfont icon-back">←</text>
+				<text class="back-text">返回</text>
 			</view>
 			<view class="navbar-title">历史记录</view>
 			<view class="navbar-right" v-if="historyList.length > 0" @tap="clearAllHistory">
@@ -224,11 +224,18 @@ export default {
 	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 	position: relative;
 	z-index: 10;
-}
-
-.navbar-left {
-	width: 40px;
-	font-size: 18px;
+	
+	.navbar-left {
+		width: 70px;
+		display: flex;
+		align-items: center;
+		
+		.back-text {
+			font-size: 16px;
+			color: #333333;
+			font-weight: 500;
+		}
+	}
 }
 
 .navbar-title {

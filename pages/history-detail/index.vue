@@ -3,7 +3,7 @@
 		<!-- 顶部导航栏 -->
 		<view class="navbar">
 			<view class="navbar-left" @tap="goBack">
-				<text class="iconfont icon-back"></text>
+				<text class="back-text">返回</text>
 			</view>
 			<view class="navbar-title">记录详情</view>
 			<view class="navbar-right"></view>
@@ -402,21 +402,22 @@ export default {
 }
 
 .navbar {
+	padding: 12px 16px;
 	display: flex;
 	align-items: center;
-	height: 88rpx;
-	padding-top: var(--status-bar-height);
-	padding-left: 30rpx;
-	padding-right: 30rpx;
-	background-color: #ffffff;
+	position: relative;
+	z-index: 100;
 	
-	.navbar-left, .navbar-right {
-		width: 88rpx;
-		height: 88rpx;
+	.navbar-left {
+		width: 70px;
 		display: flex;
-		justify-content: center;
 		align-items: center;
-		font-size: 44rpx;
+		
+		.back-text {
+			font-size: 16px;
+			color: #333333;
+			font-weight: 500;
+		}
 	}
 	
 	.navbar-title {

@@ -1,5 +1,14 @@
 <template>
 	<view class="animation-page" :class="'theme-' + currentTheme">
+		<!-- 导航栏 -->
+		<view class="nav-bar">
+			<view class="nav-left" @tap="goBack">
+				<text class="back-text">返回</text>
+			</view>
+			<view class="nav-title">{{ getThemeTitle() }}</view>
+			<view class="nav-right"></view>
+		</view>
+		
 		<!-- 进度条 -->
 		<view class="progress-bar">
 			<view class="progress" :style="{width: progress + '%'}"></view>
@@ -532,6 +541,22 @@ export default {
 			}, 300);
 		};
 		
+		// 返回上一页
+		const goBack = () => {
+			uni.navigateBack();
+		};
+		
+		// 获取主题标题
+		const getThemeTitle = () => {
+			const themeNames = {
+				'divine': '神选时刻',
+				'capsule': '命运胶囊',
+				'wheel': '天机轮',
+				'pool': '气运池'
+			};
+			return themeNames[currentTheme.value] || '正在为您决策';
+		};
+		
 		return {
 			options,
 			currentTheme,
@@ -544,7 +569,9 @@ export default {
 			selectCapsuleOption,
 			selectWheelOption,
 			confirmWheelSelection,
-			selectFinalResult
+			selectFinalResult,
+			goBack,
+			getThemeTitle
 		};
 	}
 };
@@ -552,387 +579,490 @@ export default {
 
 <style lang="scss">
 .animation-page {
-	min-height: 100vh;
-	position: relative;
-	overflow: hidden;
-	
-	&.theme-divine {
-		background-color: #2d1b4e;
-		background-image: 
-			radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.1) 0%, transparent 30%),
-			radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.2) 0%, transparent 20%);
-	}
-	
-	&.theme-capsule {
-		background-color: #0a1929;
-		background-image: 
-			linear-gradient(135deg, rgba(10, 25, 41, 0.9) 0%, rgba(29, 78, 216, 0.1) 100%);
-	}
-	
-	&.theme-wheel {
-		background-color: #f5f2e9;
-		background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><text x="20" y="40" font-family="serif" font-size="40">☯</text></svg>');
-	}
-	
-	&.theme-pool {
-		background: linear-gradient(135deg, #0a1929 0%, #1e88e5 100%);
-		background-image: 
-			radial-gradient(circle at 20% 30%, rgba(41, 182, 246, 0.15) 0%, transparent 20%),
-			radial-gradient(circle at 70% 60%, rgba(79, 195, 247, 0.1) 0%, transparent 20%);
-	}
-}
-
-.progress-bar {
-	position: absolute;
-	top: var(--status-bar-height);
-	left: 0;
-	width: 100%;
-	height: 10rpx;
-	background-color: rgba(255, 255, 255, 0.3);
-	z-index: 100;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-	
-	.progress {
-		height: 100%;
-		transition: width 0.2s ease;
-	}
-}
-
-/* 为每个主题定制进度条样式 */
-.theme-divine .progress-bar {
-	background-color: rgba(179, 136, 255, 0.2);
-	
-	.progress {
-		background: linear-gradient(to right, #9d4edd, #c77dff);
-		box-shadow: 0 0 10px rgba(157, 78, 221, 0.5);
-	}
-}
-
-.theme-capsule .progress-bar {
-	background-color: rgba(165, 216, 255, 0.2);
-	
-	.progress {
-		background: linear-gradient(to right, #0077b6, #90e0ef);
-		box-shadow: 0 0 10px rgba(0, 119, 182, 0.5);
-	}
-}
-
-.theme-wheel .progress-bar {
-	background-color: rgba(199, 140, 67, 0.15);
-	
-	.progress {
-		background: linear-gradient(to right, #a47e3b, #e6b325);
-		box-shadow: 0 0 10px rgba(164, 126, 59, 0.5);
-	}
-}
-
-.theme-pool .progress-bar {
-	background-color: rgba(41, 182, 246, 0.2);
-	
-	.progress {
-		background: linear-gradient(to right, #0288d1, #29b6f6);
-		box-shadow: 0 0 10px rgba(41, 182, 246, 0.5);
-	}
-}
-
-.animation-container {
 	width: 100%;
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 40rpx;
-	box-sizing: border-box;
-	padding-top: calc(var(--status-bar-height) + 40rpx);
-}
-
-.loading-text {
-	position: absolute;
-	bottom: 60rpx;
-	left: 0;
-	width: 100%;
-	text-align: center;
-	font-size: 26rpx;
-	color: rgba(255, 255, 255, 0.8);
-}
-
-/* 主题完成特效通用样式 */
-.divine-completion-effect,
-.capsule-completion-effect,
-.wheel-completion-effect,
-.pool-completion-effect {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 1000;
-	pointer-events: none;
-	transition: opacity 0.5s ease;
-}
+	position: relative;
+	overflow: hidden;
+	
+	/* 根据不同主题使用不同的背景图片 */
+	&.theme-capsule {
+		background: linear-gradient(135deg, #0F2027, #203A43, #2C5364);
+		
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: var(--capsule-animation-bg-image, none);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.6;
+			z-index: 0;
+		}
+	}
+	
+	&.theme-divine {
+		background: linear-gradient(135deg, #1A0033, #3B0068, #5C00A3);
+		
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: var(--divine-animation-bg-image, none);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.6;
+			z-index: 0;
+		}
+	}
+	
+	&.theme-wheel {
+		background: linear-gradient(135deg, #1E293B, #334155, #475569);
+		
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: var(--wheel-animation-bg-image, none);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.6;
+			z-index: 0;
+		}
+	}
+	
+	&.theme-pool {
+		background: linear-gradient(135deg, #0B3866, #105A9A, #1B6EBF);
+		
+		&::before {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-image: var(--pool-animation-bg-image, none);
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			opacity: 0.6;
+			z-index: 0;
+		}
+	}
+	
+	/* 确保所有内容在背景之上 */
+	& > * {
+		position: relative;
+		z-index: 1;
+	}
+	
+	.progress-bar {
+		position: absolute;
+		top: var(--status-bar-height);
+		left: 0;
+		width: 100%;
+		height: 10rpx;
+		background-color: rgba(255, 255, 255, 0.3);
+		z-index: 100;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+		
+		.progress {
+			height: 100%;
+			transition: width 0.2s ease;
+		}
+	}
 
-.fade-out {
-	opacity: 0;
-}
+	/* 为每个主题定制进度条样式 */
+	.theme-divine .progress-bar {
+		background-color: rgba(179, 136, 255, 0.2);
+		
+		.progress {
+			background: linear-gradient(to right, #9d4edd, #c77dff);
+			box-shadow: 0 0 10px rgba(157, 78, 221, 0.5);
+		}
+	}
 
-/* 神选时刻完成特效 */
-.divine-completion-effect {
-	background-color: rgba(45, 27, 78, 0.7);
-}
+	.theme-capsule .progress-bar {
+		background-color: rgba(165, 216, 255, 0.2);
+		
+		.progress {
+			background: linear-gradient(to right, #0077b6, #90e0ef);
+			box-shadow: 0 0 10px rgba(0, 119, 182, 0.5);
+		}
+	}
 
-.divine-ray {
-	position: absolute;
-	width: 3rpx;
-	height: 0;
-	background: linear-gradient(to top, rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 0));
-	transform-origin: bottom;
-	animation: rayGrow 1.5s ease-out forwards;
-}
+	.theme-wheel .progress-bar {
+		background-color: rgba(199, 140, 67, 0.15);
+		
+		.progress {
+			background: linear-gradient(to right, #a47e3b, #e6b325);
+			box-shadow: 0 0 10px rgba(164, 126, 59, 0.5);
+		}
+	}
 
-.divine-halo {
-	width: 300rpx;
-	height: 300rpx;
-	border-radius: 50%;
-	background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, rgba(138, 43, 226, 0) 70%);
-	animation: haloGlow 1.5s ease-in-out infinite alternate;
-}
+	.theme-pool .progress-bar {
+		background-color: rgba(41, 182, 246, 0.2);
+		
+		.progress {
+			background: linear-gradient(to right, #0288d1, #29b6f6);
+			box-shadow: 0 0 10px rgba(41, 182, 246, 0.5);
+		}
+	}
 
-@keyframes rayGrow {
-	0% {
+	.animation-container {
+		width: 100%;
+		height: 100vh;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		padding: 40rpx;
+		box-sizing: border-box;
+		padding-top: calc(var(--status-bar-height) + 40rpx);
+	}
+
+	.loading-text {
+		position: absolute;
+		bottom: 60rpx;
+		left: 0;
+		width: 100%;
+		text-align: center;
+		font-size: 26rpx;
+		color: rgba(255, 255, 255, 0.8);
+	}
+
+	/* 主题完成特效通用样式 */
+	.divine-completion-effect,
+	.capsule-completion-effect,
+	.wheel-completion-effect,
+	.pool-completion-effect {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 1000;
+		pointer-events: none;
+		transition: opacity 0.5s ease;
+	}
+
+	.fade-out {
+		opacity: 0;
+	}
+
+	/* 神选时刻完成特效 */
+	.divine-completion-effect {
+		background-color: rgba(45, 27, 78, 0.7);
+	}
+
+	.divine-ray {
+		position: absolute;
+		width: 3rpx;
 		height: 0;
-		opacity: 0;
+		background: linear-gradient(to top, rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 0));
+		transform-origin: bottom;
+		animation: rayGrow 1.5s ease-out forwards;
 	}
-	100% {
-		height: 50vh;
-		opacity: 1;
-	}
-}
 
-@keyframes haloGlow {
-	0% {
-		transform: scale(0.8);
-		opacity: 0.5;
+	.divine-halo {
+		width: 300rpx;
+		height: 300rpx;
+		border-radius: 50%;
+		background: radial-gradient(circle, rgba(255, 215, 0, 0.8) 0%, rgba(138, 43, 226, 0) 70%);
+		animation: haloGlow 1.5s ease-in-out infinite alternate;
 	}
-	100% {
-		transform: scale(1.2);
-		opacity: 1;
-	}
-}
 
-/* 命运胶囊完成特效 */
-.capsule-completion-effect {
-	background-color: rgba(10, 25, 41, 0.7);
-}
+	@keyframes rayGrow {
+		0% {
+			height: 0;
+			opacity: 0;
+		}
+		100% {
+			height: 50vh;
+			opacity: 1;
+		}
+	}
 
-.capsule-particle {
-	position: absolute;
-	width: 10rpx;
-	height: 10rpx;
-	background-color: #7dd3fc;
-	border-radius: 50%;
-	animation: particleFloat 1s ease-out forwards;
-}
+	@keyframes haloGlow {
+		0% {
+			transform: scale(0.8);
+			opacity: 0.5;
+		}
+		100% {
+			transform: scale(1.2);
+			opacity: 1;
+		}
+	}
 
-@keyframes particleFloat {
-	0% {
-		transform: scale(0) translateY(0);
-		opacity: 0;
+	/* 命运胶囊完成特效 */
+	.capsule-completion-effect {
+		background-color: rgba(10, 25, 41, 0.7);
 	}
-	50% {
-		opacity: 1;
-	}
-	100% {
-		transform: scale(1) translateY(-100rpx);
-		opacity: 0;
-	}
-}
 
-/* 天机轮完成特效 */
-.wheel-completion-effect {
-	background-color: rgba(245, 242, 233, 0.7);
-}
+	.capsule-particle {
+		position: absolute;
+		width: 10rpx;
+		height: 10rpx;
+		background-color: #7dd3fc;
+		border-radius: 50%;
+		animation: particleFloat 1s ease-out forwards;
+	}
 
-.wheel-bagua {
-	font-size: 120rpx;
-	color: #8d6e63;
-	animation: rotate 3s linear infinite;
-}
+	@keyframes particleFloat {
+		0% {
+			transform: scale(0) translateY(0);
+			opacity: 0;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			transform: scale(1) translateY(-100rpx);
+			opacity: 0;
+		}
+	}
 
-.wheel-symbol {
-	position: absolute;
-	font-size: 40rpx;
-	color: #8d6e63;
-	transform-origin: center center;
-	animation: symbolFade 1.5s ease-in-out forwards;
-}
+	/* 天机轮完成特效 */
+	.wheel-completion-effect {
+		background-color: rgba(245, 242, 233, 0.7);
+	}
 
-@keyframes rotate {
-	0% {
-		transform: rotate(0deg);
+	.wheel-bagua {
+		font-size: 120rpx;
+		color: #8d6e63;
+		animation: rotate 3s linear infinite;
 	}
-	100% {
-		transform: rotate(360deg);
-	}
-}
 
-@keyframes symbolFade {
-	0% {
-		opacity: 0;
-		transform: scale(0) rotate(0deg);
+	.wheel-symbol {
+		position: absolute;
+		font-size: 40rpx;
+		color: #8d6e63;
+		transform-origin: center center;
+		animation: symbolFade 1.5s ease-in-out forwards;
 	}
-	100% {
-		opacity: 1;
-		transform: scale(1) rotate(360deg) translateY(-120rpx);
-	}
-}
 
-/* 气运池完成特效 */
-.pool-completion-effect {
-	background-color: rgba(10, 25, 41, 0.7);
-}
+	@keyframes rotate {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
 
-.pool-ripple {
-	position: absolute;
-	width: 100rpx;
-	height: 100rpx;
-	border: 5rpx solid #4fc3f7;
-	border-radius: 50%;
-	animation: ripple 2s ease-out infinite;
-}
+	@keyframes symbolFade {
+		0% {
+			opacity: 0;
+			transform: scale(0) rotate(0deg);
+		}
+		100% {
+			opacity: 1;
+			transform: scale(1) rotate(360deg) translateY(-120rpx);
+		}
+	}
 
-.pool-splash {
-	position: absolute;
-	width: 8rpx;
-	height: 20rpx;
-	background-color: #4fc3f7;
-	border-radius: 50%;
-	animation: splash 1s ease-out forwards;
-}
+	/* 气运池完成特效 */
+	.pool-completion-effect {
+		background-color: rgba(10, 25, 41, 0.7);
+	}
 
-@keyframes ripple {
-	0% {
-		transform: scale(0);
-		opacity: 1;
+	.pool-ripple {
+		position: absolute;
+		width: 100rpx;
+		height: 100rpx;
+		border: 5rpx solid #4fc3f7;
+		border-radius: 50%;
+		animation: ripple 2s ease-out infinite;
 	}
-	100% {
-		transform: scale(5);
-		opacity: 0;
-	}
-}
 
-@keyframes splash {
-	0% {
-		transform: scale(0) translateY(0);
-		opacity: 0;
+	.pool-splash {
+		position: absolute;
+		width: 8rpx;
+		height: 20rpx;
+		background-color: #4fc3f7;
+		border-radius: 50%;
+		animation: splash 1s ease-out forwards;
 	}
-	50% {
-		opacity: 1;
-	}
-	100% {
-		transform: scale(1) translateY(-50rpx);
-		opacity: 0;
-	}
-}
 
-/* 天机轮完成特效样式 */
-.wheel-completion-seal {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%) rotate(-15deg);
-	color: #f44336;
-	font-size: 120rpx;
-	font-weight: bold;
-	text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
-	opacity: 0;
-	z-index: 999;
-	animation: sealAppear 2s forwards;
-	font-family: "楷体", KaiTi, sans-serif;
-	border: 8rpx solid #f44336;
-	padding: 20rpx;
-	border-radius: 20rpx;
-	background: rgba(255, 255, 255, 0.2);
-	box-shadow: 0 0 20px rgba(244, 67, 54, 0.7);
-}
+	@keyframes ripple {
+		0% {
+			transform: scale(0);
+			opacity: 1;
+		}
+		100% {
+			transform: scale(5);
+			opacity: 0;
+		}
+	}
 
-.bagua-symbol-animated {
-	position: fixed;
-	font-size: 60rpx;
-	color: #000;
-	z-index: 998;
-	opacity: 0;
-	animation: symbolFly 2s forwards;
-}
+	@keyframes splash {
+		0% {
+			transform: scale(0) translateY(0);
+			opacity: 0;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			transform: scale(1) translateY(-50rpx);
+			opacity: 0;
+		}
+	}
 
-.wheel-ink-drop {
-	position: fixed;
-	border-radius: 50%;
-	background-color: rgba(0, 0, 0, 0.8);
-	z-index: 997;
-	opacity: 0;
-	animation: inkDrop 1.5s forwards;
-}
-
-@keyframes sealAppear {
-	0% {
-		opacity: 0;
-		transform: translate(-50%, -50%) scale(0.2) rotate(-45deg);
-	}
-	20% {
-		opacity: 1;
-		transform: translate(-50%, -50%) scale(1.2) rotate(-15deg);
-	}
-	40% {
-		transform: translate(-50%, -50%) scale(0.9) rotate(-5deg);
-	}
-	60% {
-		transform: translate(-50%, -50%) scale(1) rotate(-10deg);
-	}
-	80% {
-		transform: translate(-50%, -50%) scale(1) rotate(-5deg);
-	}
-	100% {
-		opacity: 1;
-		transform: translate(-50%, -50%) scale(1) rotate(-8deg);
-	}
-}
-
-@keyframes symbolFly {
-	0% {
-		opacity: 0;
-		top: 120%;
+	/* 天机轮完成特效样式 */
+	.wheel-completion-seal {
+		position: fixed;
+		top: 50%;
 		left: 50%;
-		transform: scale(0.5) rotate(0deg);
-	}
-	50% {
-		opacity: 1;
-		transform: scale(1.5) rotate(180deg);
-	}
-	100% {
+		transform: translate(-50%, -50%) rotate(-15deg);
+		color: #f44336;
+		font-size: 120rpx;
+		font-weight: bold;
+		text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
 		opacity: 0;
-		transform: scale(0.7) rotate(360deg);
+		z-index: 999;
+		animation: sealAppear 2s forwards;
+		font-family: "楷体", KaiTi, sans-serif;
+		border: 8rpx solid #f44336;
+		padding: 20rpx;
+		border-radius: 20rpx;
+		background: rgba(255, 255, 255, 0.2);
+		box-shadow: 0 0 20px rgba(244, 67, 54, 0.7);
 	}
-}
 
-@keyframes inkDrop {
-	0% {
+	.bagua-symbol-animated {
+		position: fixed;
+		font-size: 60rpx;
+		color: #000;
+		z-index: 998;
 		opacity: 0;
-		transform: scale(0);
+		animation: symbolFly 2s forwards;
 	}
-	40% {
-		opacity: 0.8;
-		transform: scale(1);
-	}
-	80% {
-		opacity: 0.6;
-	}
-	100% {
+
+	.wheel-ink-drop {
+		position: fixed;
+		border-radius: 50%;
+		background-color: rgba(0, 0, 0, 0.8);
+		z-index: 997;
 		opacity: 0;
-		transform: scale(1.5);
+		animation: inkDrop 1.5s forwards;
+	}
+
+	@keyframes sealAppear {
+		0% {
+			opacity: 0;
+			transform: translate(-50%, -50%) scale(0.2) rotate(-45deg);
+		}
+		20% {
+			opacity: 1;
+			transform: translate(-50%, -50%) scale(1.2) rotate(-15deg);
+		}
+		40% {
+			transform: translate(-50%, -50%) scale(0.9) rotate(-5deg);
+		}
+		60% {
+			transform: translate(-50%, -50%) scale(1) rotate(-10deg);
+		}
+		80% {
+			transform: translate(-50%, -50%) scale(1) rotate(-5deg);
+		}
+		100% {
+			opacity: 1;
+			transform: translate(-50%, -50%) scale(1) rotate(-8deg);
+		}
+	}
+
+	@keyframes symbolFly {
+		0% {
+			opacity: 0;
+			top: 120%;
+			left: 50%;
+			transform: scale(0.5) rotate(0deg);
+		}
+		50% {
+			opacity: 1;
+			transform: scale(1.5) rotate(180deg);
+		}
+		100% {
+			opacity: 0;
+			transform: scale(0.7) rotate(360deg);
+		}
+	}
+
+	@keyframes inkDrop {
+		0% {
+			opacity: 0;
+			transform: scale(0);
+		}
+		40% {
+			opacity: 0.8;
+			transform: scale(1);
+		}
+		80% {
+			opacity: 0.6;
+		}
+		100% {
+			opacity: 0;
+			transform: scale(1.5);
+		}
+	}
+
+	/* 导航栏样式 */
+	.nav-bar {
+		width: 100%;
+		height: 44px;
+		display: flex;
+		align-items: center;
+		padding: 0 15px;
+		background-color: rgba(0, 0, 0, 0.1);
+		backdrop-filter: blur(10px);
+		z-index: 100;
+		position: relative;
+	}
+
+	.nav-left {
+		width: 70px;
+		height: 100%;
+		display: flex;
+		align-items: center;
+	}
+
+	.back-text {
+		font-size: 16px;
+		color: #ffffff;
+		font-weight: 500;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+	}
+
+	.nav-title {
+		flex: 1;
+		text-align: center;
+		font-size: 17px;
+		font-weight: bold;
+		color: #ffffff;
+		text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	}
+
+	.nav-right {
+		width: 30px;
 	}
 }
 </style>
