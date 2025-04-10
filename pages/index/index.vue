@@ -319,7 +319,7 @@ export default {
 }
 
 .logo-container {
-	margin-bottom: -10px;
+	margin-bottom: -20px;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
