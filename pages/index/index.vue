@@ -319,7 +319,7 @@ export default {
 }
 
 .logo-container {
-	margin-bottom: 40px;
+	margin-bottom: -10px;
 	text-align: center;
 	display: flex;
 	flex-direction: column;
@@ -330,7 +330,7 @@ export default {
 	color: white;
 	font-size: 28px;
 	font-weight: bold;
-	margin-top: 35px;
+	margin-top: 80px;
 	text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 

@@ -11,7 +11,7 @@ const STORAGE_KEYS = {
 };
 
 // 最大历史记录数量
-const MAX_HISTORY = 5;
+const MAX_HISTORY = 10;
 
 /**
  * 保存决策记录到历史

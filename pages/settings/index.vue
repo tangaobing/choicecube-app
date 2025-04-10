@@ -210,7 +210,7 @@ export default {
 		});
 		
 		// 历史记录限制选项
-		const limitOptions = ['50', '100', '200', '500', '无限制'];
+		const limitOptions = ['10', '50', '100', '200', '500', '无限制'];
 		
 		// 主题选项
 		const themes = [
